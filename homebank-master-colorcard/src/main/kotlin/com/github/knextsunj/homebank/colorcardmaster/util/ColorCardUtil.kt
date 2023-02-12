@@ -14,7 +14,7 @@ open class ColorCardUtil {
         fun isNull(obj: Any?): Boolean {
             /**
              * Applied the use of the kotlin elvis operator to check for nulls for a java input.If result is -1 then
-             * str is null
+             * obj is null
              */
             val result = obj?: -1L
             if (result == -1L) {
