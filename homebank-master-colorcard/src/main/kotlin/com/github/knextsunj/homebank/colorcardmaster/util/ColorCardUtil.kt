@@ -3,7 +3,7 @@ package com.github.knextsunj.homebank.colorcardmaster.util
 open class ColorCardUtil {
 
     /**
-     * Seen by java as a static class equivalent
+     * Seen by java as a static equivalent(ie) .class object
      */
     companion object {
 
