@@ -2,8 +2,11 @@ package com.github.knextsunj.homebank.colorcardmaster.service.impl;
 
 import com.github.knextsunj.homebank.colorcardmaster.domain.ColorCard;
 import com.github.knextsunj.homebank.colorcardmaster.dto.ColorCardDTO;
+import com.github.knextsunj.homebank.colorcardmaster.exception.ValidationFailureException;
+import com.github.knextsunj.homebank.colorcardmaster.exception.ValidationServiceInvocationException;
 import com.github.knextsunj.homebank.colorcardmaster.mapper.ColorCardMapper;
 import com.github.knextsunj.homebank.colorcardmaster.repository.ColorCardRepository;
+import com.github.knextsunj.homebank.colorcardmaster.restclient.BusinessRuleEngineClient;
 import com.github.knextsunj.homebank.colorcardmaster.service.ColorCardService;
 import com.github.knextsunj.homebank.colorcardmaster.util.ColorCardUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +28,22 @@ public class ColorCardServiceImpl implements ColorCardService {
     @Autowired
     private ColorCardMapper colorCardMapper;
 
+    @Autowired
+    private BusinessRuleEngineClient businessRuleEngineClient;
+
     @Override
     public boolean saveColorCard(ColorCardDTO colorCardDTO) {
 
         if (Optional.ofNullable(colorCardDTO).isPresent() && !ColorCardUtil.isNull(colorCardDTO.name())) {
-            ColorCard colorCard = colorCardMapper.fromColorCardDTO(colorCardDTO);
-            ColorCard result = colorCardRepository.save(colorCard);
-            return null != result ? true : false;
+            try {
+                if (businessRuleEngineClient.executeDeDup(colorCardDTO.name())) {
+                    ColorCard colorCard = colorCardMapper.fromColorCardDTO(colorCardDTO);
+                    ColorCard result = colorCardRepository.save(colorCard);
+                    return null != result ? true : false;
+                }
+            } catch (ValidationServiceInvocationException ex) {
+                throw new ValidationFailureException((ex.getMessage()));
+            }
         }
         return false;
     }
@@ -41,16 +53,20 @@ public class ColorCardServiceImpl implements ColorCardService {
         ColorCard result = null;
 
         if (Optional.ofNullable(colorCardDTO).isPresent() && ColorCardUtil.isNumPresent(colorCardDTO.id())) {
-            Optional<ColorCard> colorCardOptional = colorCardRepository.findById(colorCardDTO.id());
-            if (colorCardOptional.isPresent()) {
-                ColorCard colorCard = colorCardOptional.get();
-                colorCard.setName(colorCardDTO.name());
-                if (!ColorCardUtil.isNull(colorCardDTO.deleted())) {
-                    colorCard.setDeleted(colorCardDTO.deleted());
-                }
-                result = colorCardRepository.save(colorCard);
+            try {
+                    Optional<ColorCard> colorCardOptional = colorCardRepository.findById(colorCardDTO.id());
+                    if (colorCardOptional.isPresent()) {
+                        ColorCard colorCard = colorCardOptional.get();
+                        colorCard.setName(colorCardDTO.name());
+                        if (!ColorCardUtil.isNull(colorCardDTO.deleted())) {
+                            colorCard.setDeleted(colorCardDTO.deleted());
+                        }
+                        result = colorCardRepository.save(colorCard);
+                    }
+                return result != null ? true : false;
+            } catch (ValidationServiceInvocationException ex) {
+                throw new ValidationFailureException((ex.getMessage()));
             }
-            return result != null ? true : false;
         }
 
         return false;

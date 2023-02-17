@@ -1,5 +1,6 @@
 package com.github.knextsunj.homebank.colorcardmaster;
 
+import com.github.knextsunj.homebank.colorcardmaster.config.AppConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
+@Import(AppConfig.class)
 @EnableTransactionManagement
 public class Application {
 
@@ -28,7 +30,5 @@ public class Application {
 //
 //        };
 //    }
-
-
 
 }
