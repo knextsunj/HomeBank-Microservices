@@ -229,7 +229,7 @@
           <appsDirectory>apps</appsDirectory>
           <installAppPackages>spring-boot-project</installAppPackages>
           <include>minify,runnable</include>
-          <packageName>colorcard-service</packageName>
+          <packageName>businessrules-engine</packageName>
         </configuration>
         <executions>
           <execution>

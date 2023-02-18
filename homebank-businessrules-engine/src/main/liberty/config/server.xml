@@ -11,8 +11,8 @@
                   httpPort="9081"
                   httpsPort="9444" />
 
-    <springBootApplication id="homebank-colorcard-master"
-                           location="thin-homebank-colorcard-master-0.1.0.jar"
-                           name="homebank-colorcard-master" />
+    <springBootApplication id="homebank-businessrule-engine"
+                           location="thin-homebank-businessrule-engine-0.1.0.jar"
+                           name="homebank-businessrule-engine" />
 
 </server>
